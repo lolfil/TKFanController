@@ -1,14 +1,13 @@
-import clr #pythonnet
+import clr  # pythonnet
 import time
 import serial
 
 
-openhardwaremonitor_sensortypes = ['Voltage','Clock','Temperature','Load','Fan','Flow','Control','Level','Factor',
-                                   'Power','Data','SmallData']
-temps = [0.0,0.0]
+openhardwaremonitor_sensortypes = ['Voltage', 'Clock', 'Temperature', 'Load', 'Fan', 'Flow', 'Control', 'Level',
+                                   'Factor', 'Power', 'Data', 'SmallData']
 # duty low 27 high 255
 # min 50-55 max 80
-
+temps = [0.0, 0.0]
 minPWM = 27
 maxPWM = 255
 minTemp = 50
@@ -19,7 +18,7 @@ print(255/delta)
 
 
 def get_pwm_width(t):
-    #res =  min(minPWM + (t - minTemp) * step, 255)
+    # res =  min(minPWM + (t - minTemp) * step, 255)
     return max(min(min(minPWM + (t - minTemp) * step, 255), maxPWM), minPWM)
 
 
@@ -60,19 +59,19 @@ def fetch_stats(handle):
 
 
 def parse_sensor(sensor):
-        if sensor.Value is not None:
-            if type(sensor).__module__ == 'OpenHardwareMonitor.Hardware':
-                sensortypes = openhardwaremonitor_sensortypes
-            else:
-                return
+    if sensor.Value is not None:
+        if type(sensor).__module__ == 'OpenHardwareMonitor.Hardware':
+            sensortypes = openhardwaremonitor_sensortypes
+        else:
+            return
 
-            if sensor.SensorType == sensortypes.index('Temperature'):
-                # use the following code to detect CPU and GPU sensors
-                # print("%s - %s - %s\u00B0C" % (sensor.Name, sensor.Identifier, sensor.Value))
-                if str(sensor.Identifier) == "/lpc/it8688e/temperature/2":
-                    temps[0] = float(sensor.Value)
-                if str(sensor.Identifier) == "/atigpu/0/temperature/0":
-                    temps[1] = float(sensor.Value)
+        if sensor.SensorType == sensortypes.index('Temperature'):
+            # use the following code to detect CPU and GPU sensors
+            # print("%s - %s - %s\u00B0C" % (sensor.Name, sensor.Identifier, sensor.Value))
+            if str(sensor.Identifier) == "/lpc/it8688e/temperature/2":
+                temps[0] = float(sensor.Value)
+            if str(sensor.Identifier) == "/atigpu/0/temperature/0":
+                temps[1] = float(sensor.Value)
 
 
 if __name__ == "__main__":
@@ -91,4 +90,3 @@ if __name__ == "__main__":
             time.sleep(1)
     except KeyboardInterrupt:
         pass
-
